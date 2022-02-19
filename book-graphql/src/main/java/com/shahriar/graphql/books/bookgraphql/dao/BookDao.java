@@ -1,9 +1,9 @@
 package com.shahriar.graphql.books.bookgraphql.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -33,7 +33,7 @@ public class BookDao {
     public BookDao() {        
     }
 
-    public JSONObject getBookById(String bookId) throws JSONException {
+    public Map<String, String> getBookById(String bookId) {
 		
 		String queryById = String.format(SELECT_BOOK_BY_ID, Integer.parseInt(bookId));
 				
@@ -41,7 +41,7 @@ public class BookDao {
 		
 		List<com.datastax.oss.driver.api.core.cql.Row> rows = resultSet.all();
 		
-		JSONObject book = new JSONObject();		
+		Map<String, String> book = new HashMap<>();
 		book.put(BOOK_ID_COLUMN, bookId);		
 		// id is the primary key. There will be only one row for this Id.
 		for(com.datastax.oss.driver.api.core.cql.Row row : rows) {			
@@ -49,7 +49,7 @@ public class BookDao {
 			book.put(BOOK_TITLE2_COLUMN, row.getString(BOOK_TITLE2_COLUMN));			
 			book.put(BOOK_AUTHOR_ID_COLUMN, String.valueOf(row.getInt(BOOK_AUTHOR_ID_COLUMN)));
 			book.put(BOOK_ISBN_COLUMN, row.getString(BOOK_ISBN_COLUMN));
-			book.put(BOOK_PRICE_COLUMN, row.getDouble(BOOK_PRICE_COLUMN));
+			book.put(BOOK_PRICE_COLUMN, String.valueOf(row.getDouble(BOOK_PRICE_COLUMN)));
 			book.put(BOOK_CURRENCY_COLUMN, row.getString(BOOK_CURRENCY_COLUMN));
 			book.put(BOOK_FORMAT_COLUMN, row.getString(BOOK_FORMAT_COLUMN));			
 		}

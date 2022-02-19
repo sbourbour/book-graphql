@@ -2,9 +2,7 @@ package com.shahriar.graphql.books.bookgraphql.datafetchers;
 
 import java.util.Map;
 
-import com.google.gson.Gson;
 import graphql.schema.DataFetcher;
-import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import com.shahriar.graphql.books.bookgraphql.dao.AuthorDao;
@@ -22,34 +20,19 @@ public class GraphQLDataFetchers {
     	this.authorDao = authorDao;
     }
 
-    public DataFetcher<Map> getBookByIdDataFetcher() {
+    public DataFetcher<Map<String, String>> getBookByIdDataFetcher() {
         return dataFetchingEnvironment -> {
             String bookId = dataFetchingEnvironment.getArgument("id");
-            JSONObject book = bookDao.getBookById(bookId);            
-            if(book != null) {
-            	Gson gson = new Gson();
-            	Map bookAsMap = gson.fromJson(book.toString(), Map.class);
-            	
-            	return bookAsMap;
-            }            
-            return null;            
+            return bookDao.getBookById(bookId);                                  
         };
     }
 
-    public DataFetcher<Map> getAuthorDataFetcher() {
+    public DataFetcher<Map<String, String>> getAuthorDataFetcher() {
         return dataFetchingEnvironment -> {
         	// DataFetchers are executed from top down. "Source" is the book fetched above.
-        	Map<String,String> book = dataFetchingEnvironment.getSource();
-        	System.out.print(book.toString());
+        	Map<String,String> book = dataFetchingEnvironment.getSource();        	
             String authorId = book.get("authorId");
-            JSONObject author = authorDao.getAuthor(authorId);
-        	if(author != null) {        		
-	        	Gson gson = new Gson();
-	        	Map authorAsMap = gson.fromJson(author.toString(), Map.class);
-	        	
-	        	return authorAsMap;
-        	}
-        	return null;
+            return authorDao.getAuthor(authorId);        	
         };
     }       
 }

@@ -1,10 +1,10 @@
 package com.shahriar.graphql.books.bookgraphql.dao;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -37,15 +37,14 @@ public class AuthorDao {
     public AuthorDao() {        
     }
     
-    public JSONObject getAuthor(String authorId) throws JSONException {
+    public Map<String, String> getAuthor(String authorId) {
     	String queryById = String.format(SELECT_AUTHOR_BY_ID, Integer.parseInt(authorId));
-    	System.out.println(queryById);
-		
+    			
 		com.datastax.oss.driver.api.core.cql.ResultSet resultSet = cassandraSession.execute(queryById);
 		
 		List<com.datastax.oss.driver.api.core.cql.Row> rows = resultSet.all();
 		
-		JSONObject author = new JSONObject();		
+		Map<String, String> author = new HashMap<>();		
 		author.put(AUTHOR_ID_COLUMN, authorId);		
 		// id is the primary key. There will be only one row for this Id.
 		for(com.datastax.oss.driver.api.core.cql.Row row : rows) {			
